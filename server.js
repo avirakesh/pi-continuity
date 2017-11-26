@@ -11,16 +11,36 @@ var urlEncodedParser = bodyParser.urlencoded({
     extended: false
 });
 
+var MongoClient = require('mongodb').MongoClient;
+var arrest = require('assert');
+// Hard Coded for now
+var databaseUrl = 'mongodb://localhost:27017/sms';
+
+var db;
+
+var smsModule = require('./modules/sms-module.js');
+
 app.use(bodyParser.json());
 app.use(urlEncodedParser);
+
+MongoClient.connect(databaseUrl, function(err, database) {
+    if (err) {
+        return console.log(err);
+    }
+
+    db = database;
+
+    http.listen(port, function() {
+        console.log ('Server running at port ' + port);
+    });
+});
 
 app.get('/', function(req, res) {
     res.send('/views/index.html');
 });
 
 app.post('/add-sms', function(req, res) {
-    console.log(req);
-    res.send(JSON.stringify(req.body));
+    smsModule.addSms(req.body, res, db);
 });
 
 app.use('/assets', express.static('assets'));
@@ -28,13 +48,4 @@ app.use('/', express.static('assets'));
 
 io.on('connection', function(socket) {
 	console.log('Connection Established');
-	// socket.emit('update_notifs');
-
-	// socket.on('disconnect', function() {
-		// console.log('Connection Removed')
-	// });
-});
-
-http.listen(port, function() {
-    console.log ('Server running at port ' + port);
 });
