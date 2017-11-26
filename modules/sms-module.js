@@ -1,8 +1,6 @@
 module.exports = {};
 
 module.exports.addSms = function (messages, res, db) {
-    console.log(messages);
-
     var hadError = false;
 
     var latestTime = -1;
@@ -23,7 +21,6 @@ module.exports.addSms = function (messages, res, db) {
                 }
                 return console.log(err);
             }
-            console.log(i);
             if (ctr == total) {
                 sendResponse(hadError, latestTime, res);
             }
